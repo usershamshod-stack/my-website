@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Do'kon Hisob Kitob</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-slate-100">
+    <div class="flex h-screen">
+        <!-- Main Content -->
+        <div class="flex-1 p-8 overflow-auto">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h1 class="text-4xl font-bold text-slate-900 mb-2">Do'kon Hisob Kitob</h1>
+                        <p class="text-slate-600">Kirim va chiqimlarni kuzatib turing</p>
+                    </div>
+                    <button onclick="resetData()" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold transition-colors text-sm">
+                        🔄 Barcha Ma'lumotni O'chirish
+                    </button>
+                </div>
+
+                <!-- Summary Cards -->
+                <div class="grid grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white rounded-2xl p-6 shadow-lg border-l-4 border-green-500">
+                        <p class="text-slate-600 text-sm font-medium mb-2">Jami Kirim</p>
+                        <p class="text-3xl font-bold text-green-600" id="totalIncome">0 so'm</p>
+                    </div>
+                    <div class="bg-white rounded-2xl p-6 shadow-lg border-l-4 border-red-500">
+                        <p class="text-slate-600 text-sm font-medium mb-2">Jami Chiqim</p>
+                        <p class="text-3xl font-bold text-red-600" id="totalExpenses">0 so'm</p>
+                    </div>
+                    <div class="rounded-2xl p-6 shadow-lg border-l-4 border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100">
+                        <p class="text-slate-600 text-sm font-medium mb-2">Balans</p>
+                        <p class="text-3xl font-bold text-blue-600" id="balance">0 so'm</p>
+                    </div>
+                </div>
+
+                <!-- Mode Selector -->
+                <div class="flex gap-4 mb-6">
+                    <button id="incomeBtn" class="px-6 py-3 rounded-xl font-semibold transition-all bg-green-500 text-white shadow-lg" onclick="setMode('income')">
+                        + Kirim Qo'sh
+                    </button>
+                    <button id="expenseBtn" class="px-6 py-3 rounded-xl font-semibold transition-all bg-white text-slate-600 border border-slate-200" onclick="setMode('expense')">
+                        - Chiqim Qo'sh
+                    </button>
+                </div>
+
+                <!-- Lists -->
+                <div class="grid grid-cols-2 gap-8">
+                    <!-- Income List -->
+                    <div class="bg-white rounded-2xl p-6 shadow-lg">
+                        <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                            <span class="w-3 h-3 bg-green-500 rounded-full"></span>
+                            Kirimlar
+                        </h2>
+                        <div class="space-y-3 max-h-96 overflow-y-auto" id="incomeList">
+                            <p class="text-slate-400 text-center py-8">Kirim yoq</p>
+                        </div>
+                    </div>
+
+                    <!-- Expenses List -->
+                    <div class="bg-white rounded-2xl p-6 shadow-lg">
+                        <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                            <span class="w-3 h-3 bg-red-500 rounded-full"></span>
+                            Chiqimlar
+                        </h2>
+                        <div class="space-y-3 max-h-96 overflow-y-auto" id="expenseList">
+                            <p class="text-slate-400 text-center py-8">Chiqim yoq</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Numeric Keypad -->
+        <div class="w-80 bg-white border-l border-slate-200 p-6 flex flex-col">
+            <h3 class="text-lg font-bold text-slate-900 mb-4">Kiritish</h3>
+
+            <!-- Input Fields -->
+            <div class="mb-6 space-y-3">
+                <input type="text" id="description" placeholder="Tavsifi" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" id="amount" placeholder="0" class="w-full px-4 py-3 border-2 border-slate-300 rounded-lg text-2xl font-bold text-right focus:outline-none focus:ring-2 focus:ring-blue-500" readonly>
+            </div>
+
+            <!-- Keypad -->
+            <div class="grid grid-cols-3 gap-3 mb-6 flex-1">
+                <button onclick="addNumber('1')" class="bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold py-6 rounded-lg transition-colors text-xl">1</button>
+                <button onclick="addNumber('2')" class="bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold py-6 rounded-lg transition-colors text-xl">2</button>
+                <button onclick="addNumber('3')" class="bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold py-6 rounded-lg transition-colors text-xl">3</button>
+                <button onclick="addNumber('4')" class="bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold py-6 rounded-lg transition-colors text-xl">4</button>
+                <button onclick="addNumber('5')" class="bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold py-6 rounded-lg transition-colors text-xl">5</button>
+                <button onclick="addNumber('6')" class="bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold py-6 rounded-lg transition-colors text-xl">6</button>
+                <button onclick="addNumber('7')" class="bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold py-6 rounded-lg transition-colors text-xl">7</button>
+                <button onclick="addNumber('8')" class="bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold py-6 rounded-lg transition-colors text-xl">8</button>
+                <button onclick="addNumber('9')" class="bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold py-6 rounded-lg transition-colors text-xl">9</button>
+                <button onclick="addNumber('0')" class="col-span-2 bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold py-6 rounded-lg transition-colors text-xl">0</button>
+                <button onclick="addNumber('.')" class="bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold py-6 rounded-lg transition-colors text-xl">.</button>
+            </div>
+
+            <!-- Control Buttons -->
+            <div class="space-y-3">
+                <button onclick="deleteChar()" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-lg transition-colors">← O'chirish</button>
+                <button onclick="clearAmount()" class="w-full bg-slate-300 hover:bg-slate-400 text-slate-900 font-bold py-3 rounded-lg transition-colors">Tozalash</button>
+                <button id="addBtn" onclick="addItem()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-lg transition-colors">Qo'shish</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'dokonHisob_data';
+        let income = [];
+        let expenses = [];
+        let currentMode = 'income';
+
+        // Ma'lumotlarni LocalStorage-dan yuklash
+        function loadData() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                const data = JSON.parse(saved);
+                income = data.income || [];
+                expenses = data.expenses || [];
+            }
+            updateUI();
+        }
+
+        // Ma'lumotlarni LocalStorage-ga saqlash
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({ income, expenses }));
+        }
+
+        function setMode(mode) {
+            currentMode = mode;
+            const incomeBtn = document.getElementById('incomeBtn');
+            const expenseBtn = document.getElementById('expenseBtn');
+            const addBtn = document.getElementById('addBtn');
+
+            if (mode === 'income') {
+                incomeBtn.className = 'px-6 py-3 rounded-xl font-semibold transition-all bg-green-500 text-white shadow-lg';
+                expenseBtn.className = 'px-6 py-3 rounded-xl font-semibold transition-all bg-white text-slate-600 border border-slate-200';
+                addBtn.className = 'w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-lg transition-colors';
+            } else {
+                incomeBtn.className = 'px-6 py-3 rounded-xl font-semibold transition-all bg-white text-slate-600 border border-slate-200';
+                expenseBtn.className = 'px-6 py-3 rounded-xl font-semibold transition-all bg-red-500 text-white shadow-lg';
+                addBtn.className = 'w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-lg transition-colors';
+            }
+        }
+
+        function addNumber(num) {
+            const amountInput = document.getElementById('amount');
+            const value = amountInput.value;
+            const filtered = (value + num).replace(/[^0-9.]/g, '');
+            amountInput.value = filtered;
+        }
+
+        function deleteChar() {
+            const amountInput = document.getElementById('amount');
+            amountInput.value = amountInput.value.slice(0, -1);
+        }
+
+        function clearAmount() {
+            document.getElementById('amount').value = '';
+        }
+
+        function addItem() {
+            const description = document.getElementById('description').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+
+            if (!description || !amount) {
+                alert('Iltimos, tavsif va summa kiritib turing!');
+                return;
+            }
+
+            const item = { id: Date.now(), description, amount };
+
+            if (currentMode === 'income') {
+                income.push(item);
+            } else {
+                expenses.push(item);
+            }
+
+            document.getElementById('description').value = '';
+            document.getElementById('amount').value = '';
+            saveData();
+            updateUI();
+        }
+
+        function deleteItem(id, type) {
+            if (type === 'income') {
+                income = income.filter(item => item.id !== id);
+            } else {
+                expenses = expenses.filter(item => item.id !== id);
+            }
+            saveData();
+            updateUI();
+        }
+
+        function resetData() {
+            const password = prompt('Barcha ma\'lumotlarni o\'chirish uchun parol kiritib turing:');
+            if (password === null) return;
+            
+            if (password === '039779') {
+                if (confirm('Barcha ma\'lumotlar o\'chiriladi! Davom etasizmi?')) {
+                    income = [];
+                    expenses = [];
+                    localStorage.removeItem(STORAGE_KEY);
+                    updateUI();
+                    alert('Ma\'lumotlar o\'chirildi!');
+                }
+            } else {
+                alert('Parol xato! Ma\'lumotlar o\'chirilmadi.');
+            }
+        }
+
+        function updateUI() {
+            const totalIncome = income.reduce((sum, item) => sum + item.amount, 0);
+            const totalExpenses = expenses.reduce((sum, item) => sum + item.amount, 0);
+            const balance = totalIncome - totalExpenses;
+
+            document.getElementById('totalIncome').textContent = totalIncome.toLocaleString('uz-UZ') + ' so\'m';
+            document.getElementById('totalExpenses').textContent = totalExpenses.toLocaleString('uz-UZ') + ' so\'m';
+            document.getElementById('balance').textContent = balance.toLocaleString('uz-UZ') + ' so\'m';
+
+            // Update income list
+            const incomeList = document.getElementById('incomeList');
+            if (income.length === 0) {
+                incomeList.innerHTML = '<p class="text-slate-400 text-center py-8">Kirim yoq</p>';
+            } else {
+                incomeList.innerHTML = income.map(item => `
+                    <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+                        <div>
+                            <p class="font-semibold text-slate-800">${item.description}</p>
+                            <p class="text-green-600 font-bold">${item.amount.toLocaleString('uz-UZ')} so'm</p>
+                        </div>
+                        <button onclick="deleteItem(${item.id}, 'income')" class="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded-lg transition-colors">
+                            🗑️
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            // Update expense list
+            const expenseList = document.getElementById('expenseList');
+            if (expenses.length === 0) {
+                expenseList.innerHTML = '<p class="text-slate-400 text-center py-8">Chiqim yoq</p>';
+            } else {
+                expenseList.innerHTML = expenses.map(item => `
+                    <div class="flex justify-between items-center p-3 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
+                        <div>
+                            <p class="font-semibold text-slate-800">${item.description}</p>
+                            <p class="text-red-600 font-bold">${item.amount.toLocaleString('uz-UZ')} so'm</p>
+                        </div>
+                        <button onclick="deleteItem(${item.id}, 'expense')" class="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded-lg transition-colors">
+                            🗑️
+                        </button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Ilovani yuklash
+        loadData();
+    </script>
+</body>
+</html>
